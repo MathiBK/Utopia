@@ -1,0 +1,30 @@
+﻿@using utopia.Helper
+@using Microsoft.CodeAnalysis
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<div>
+    <canvas id="myCanvas" width="600" height="600"></canvas>
+</div>
+</body>
+<script>
+@{
+    MapGen m = new MapGen(600, 267813);
+}
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var vert = @m.Vertices;
+for(var i = 0; i < @m.Vertices.Count; i++)
+    {
+        console.log(vert[i]);
+    }
+ctx.moveTo(0, 0);
+ctx.lineTo(200, 100);
+ctx.stroke();
+</script>
+</html>

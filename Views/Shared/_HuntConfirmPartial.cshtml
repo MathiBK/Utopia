@@ -1,0 +1,67 @@
+﻿@model SpeciesIndividual
+
+
+<div class="container">
+    <h5>You have encountered @Model.IndividualName the @Model.Species.SpeciesName</h5>
+    <h6>Do you wish to fight this sick animal</h6>
+    <div class="row">
+        <div class="col-sm">
+            Attack
+        </div>
+        <div class="col-sm">
+            HP
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            @Model.IndividualAttack
+        </div>
+        <div class="col-sm">
+            @Model.IndividualHp
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <button id="acceptHunt">Yes</button>
+        </div>
+        <div class="col-sm">
+            <button id="rejectHunt">No</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+$("#acceptHunt").click(function() {
+   $.ajax({
+         url: "/Home/HuntConfirmed",
+
+         type: "POST",
+         success: function(data)
+         {
+ 
+         },
+         error: function(passParams)
+         {
+             console.log(passParams)
+         }
+     });
+});
+
+$("#rejectHunt").click(function() {
+   $.ajax({
+         url: "/Home/HuntRejected",
+
+         type: "POST",
+         success: function(data)
+         {
+             console.log(data);
+            $("#HuntData").html(data);
+         },
+         error: function(passParams)
+         {
+             console.log(passParams)
+         }
+     });
+});
+</script>

@@ -1,0 +1,11 @@
+﻿@model Tribe
+
+<h5>Welcome to Tribe @Model.Name</h5>
+<p><b>Members:</b></p>
+@foreach (var player in @Model.TribePlayers)
+{
+    <p>@player.PlayerName |  @if(player.Connected) {<span style="color:green">Online</span> }
+        else {<span style="color:red">Offline</span> }
+    </p>
+}
+

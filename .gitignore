@@ -1,0 +1,13 @@
+.idea
+bin
+app.db
+app.db-shm
+app.db-wal
+obj
+*.db
+*.pyc
+*.swp
+*.tmp
+Migrations
+appsettings.json
+appsettings.Development.json

@@ -1,0 +1,26 @@
+﻿@model utopia.Models.ViewModels.TileSpeciesViewModel
+
+
+<div class="container">
+    
+    <div class="row">
+        
+    @foreach (var v in Model.TileSpecieses)
+    {
+        <div class="col-sm-3">
+            <h2>@v.Species.SpeciesName : @v.Amount</h2>
+            @if (v.Amount > 0)
+            {
+                <h2>@Model.Species[v.SpeciesId - 1].SpeciesName : @v.Amount</h2>
+                @if (v.SpeciesIndividuals != null)
+                {
+                    @foreach (var w in v.SpeciesIndividuals)
+                    {
+                        <partial name="_SpeciesIndividualPartial" model="w"/>
+                    }
+                }
+            }
+        </div>
+    }
+    </div>
+</div>

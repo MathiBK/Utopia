@@ -1,0 +1,265 @@
+﻿@{
+    ViewData["Title"] = "Utopia - Game";
+}
+
+<style>
+    #myProgress {
+      width: 100%;
+      background-color: grey;
+    }
+    
+    #myBar {
+      width: 1%;
+      height: 30px;
+      background-color: green;
+    }
+</style>
+@section Scripts
+{
+        <script src="https://unpkg.com/axios/dist/axios.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/splitpanes"></script>
+        <script type="text/javascript" src="~/js/hexhelp.js"></script>
+        <script type="text/javascript" src="~/js/utopiaVue.js"></script>
+        <script src="~/lib/signalr/signalr.js"></script>
+        <script type="text/javascript" src="~/js/signalhunt.js"></script>
+
+
+
+<div id="app" v-cloak>
+    <splitpanes class="default-theme" horizontal style="height: 100px">
+        <pane id="menu">
+            <span>
+                <div class="text-center">
+                    <h2>Menu</h2>
+                    <div class="row justify-content-end" >
+                                                       
+                        <div class="col-4">                                
+                            <button class="btn btn-primary" v-on:click="hideTribe = true, hideChat = true, hideCrafting = true, hideActions = true, hideMap = false, hideAll = false"> Map</button>
+                            <button class="btn btn-primary" v-on:click="hideTribe = true, hideChat = true, hideCrafting = true, hideMap = true, hideActions = false, hideAll = false"> Actions</button>
+                            <button class="btn btn-primary" v-on:click="hideTribe = true, hideChat = true, hideActions = true, hideMap = true, hideCrafting = false, hideAll = false"> Crafting</button>
+                            <button class="btn btn-primary" v-on:click="hideActions = true, hideCrafting = true, hideMap = true, hideChat = true, hideTribe = false, hideAll = false"> Tribe</button>
+                            <button class="btn btn-primary" v-on:click="hideTribe = true, hideActions = true, hideCrafting = true, hideMap = true, hideChat = false, hideAll = false"> Chat</button>
+                        </div>
+                        <div class="col-4"> 
+                            
+                            <table>
+                                <tr>
+                                    <th>Attack: </th>
+                                       
+                                    <td> <span id="AttackInfo"></span></td>
+                                </tr>
+                                <tr>
+                                 <th>Hp: </th>
+                                    <td> <span id="HpInfo"></span></td>
+                                    </tr>
+                            </table>
+                        </div>
+                        
+                    </div>
+                    </div>
+                </span><br>
+            </pane>
+        </splitpanes>
+        <splitpanes class="default-theme"
+                    :dbl-click-splitter="false" :push-other-panes="false" style="height: 800px" v-show="!hideAll">
+
+            <pane class="overflow-auto" id="log" size="20" max-size="20" min-size="20" v-show="!hideLog">
+                <span>
+                    <div class="text-center">
+                        <h5>Log</h5>
+                    </div>
+                    <ul>
+                        <li v-for="log in logs.slice().reverse()">
+                            {{log.message}}
+                        </li>
+
+                    </ul>
+
+                </span>
+     
+            </pane>
+
+
+            <pane class="overflow-auto" id="actions" size="60" max-size="60" min-size="60" v-show="!hideActions">
+                <span>
+
+                    <div class="text-center">
+                        <h5>Actions</h5>
+
+                    </div>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td v-for="(action, index) in actions" v-if="index<4">
+                                <button-action v-bind:action="action"> </button-action>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center">
+                        <h5>Hunting</h5>
+                        <button-hunt>Hunting</button-hunt>
+                        <div id="HuntData"></div>
+                    </div>
+                </span>
+
+            </pane>
+
+            <pane class="overflow-auto" id="crafting" size="60" max-size="60" min-size="60" v-show="!hideCrafting">
+                <span>
+
+                    <div class="text-center">
+                        <h5>Crafting</h5>
+                        <p>List of items to craft</p>
+                    </div>
+
+
+                    <table class="table table-borderless">
+
+
+                        <tr v-for="(item, index) in items">
+
+                            <td>{{item.name}}</td>
+                            <td>{{item.cost}}</td>
+                            <td >
+                                <button-craft v-bind:item="item"> </button-craft>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    
+                </span>
+
+            </pane>
+
+            <pane class="overflow-auto" id="tribe" size="60" max-size="60" min-size="60" v-show="!hideTribe">
+                <span>
+
+                    <div id="tribeData" class="text-center">
+
+
+                    </div>
+
+
+                </span>
+
+            </pane>
+
+            <pane class="overflow-auto" id="chat" size="60" max-size="60" min-size="60" v-show="!hideChat">
+                <span>
+
+
+                    <div class="form-group">
+                        <form v-on:submit.prevent="submitCard('@User.Identity.Name')">
+
+
+                            <div class="input-group mb-3">
+                                <input type="text" name="Message"
+                                       id="userMessage"
+                                       v-model="userMessage"
+                                       placeholder="Send a message"
+                                       class="form-control">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" id="sendButton" v-on:click="submitCard('@User.Identity.Name')" type="submit">Send</button>
+                                </div>
+
+                            </div>
+                        </form>
+                        <ul>
+
+                            <li v-for="item in messages.slice().reverse()" >
+                                <small>{{item.date}}</small> <b> {{item.user}}: </b> {{item.message}}</li>
+                        </ul>
+                    </div>
+
+
+                </span>
+
+            </pane>
+            <pane class="overflow-auto" id="map" size="60" max-size="60" min-size="60" v-show="!hideMap">
+                <div   align="center">
+                    <button id="moveTest">
+                        Move Player!
+                    </button>
+                    <p align="center">
+                        <canvas id="c" width="500" height="300" style="border:1px solid #ccc">
+
+                        </canvas>
+                    </p>
+                    <div id="Mapdata">
+                        <p id="TileName"></p>
+                    </div>
+
+                </div>
+
+
+            </pane>
+
+            <pane class="overflow-auto" id="resources" size="20" min-size="20" max-size="20" v-show="!hidePlayerResources">
+
+                <span>
+                    <div class="text-center">
+                        <h5>My Resources</h5>
+                    </div>
+                    <table class="table table-borderless">
+                        <tr v-for="(resource, index) in resources">
+                            <td v-bind:id="resource.name + 'Name'">{{resource.name}}</td>
+                            <td v-bind:id="resource.name + 'Data'">{{resource.x}} </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div class="text-center">
+                        <h5>My Items</h5>
+                    </div>
+                    <table class="table table-borderless">
+                        <tr v-for="(item, index) in items">
+                            <td v-bind:id="item.name + 'Name'">{{item.name}}</td>
+                            <td v-bind:id="item.name + 'Data'">{{item.x}} </td>
+                        </tr>
+                    </table>
+                </span>
+            </pane>
+            
+
+
+        </splitpanes>
+        
+ </div>
+        
+        <script type="text/javascript">
+
+    
+    //Last inn site.js for å sette fabric på canvas
+    $(document).ready (function () {
+    //Ikke kall getMap igjen!!
+    getMap();
+    //Denne oppdaterer partial view om du har funnet et dyr.
+    FetchPossibleHunt();
+    FetchPlayerResources();
+    FetchPlayerItems();
+    FetchPlayerInfo();
+    
+    document.getElementById("moveTest").addEventListener("click", movePlayer);
+
+     function movePlayer() 
+     {
+         let v = getCurrentCoords();
+          console.log("moving player!");
+          $.ajax({
+             url: "/Home/MovePlayer",
+
+             data: {hexX: v.x, hexY: v.y },
+             type: "POST",
+             success: function(data)
+             {
+                  console.log(data);
+             },
+             error: function(passParams)
+             {
+                  console.log(passParams);
+             }
+        });
+     }
+        });
+</script>
+    }

@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div id="splashcontainer" style="position:center;width:1200px;"></div>
+<layer id="splashcontainerns" width="450"></layer>
+<script>
+
+    var preloadimages = new Array("sun.gif", " sun.gif")
+    var intervals = 2000
+    
+    var splashmessage = new Array()
+    var openingtags = '<font face="Arial" size="20">'
+    
+   
+    
+    
+    
+    
+    splashmessage[0] = '**Velkommen til Utopia spillet**'
+    splashmessage[1] = 'Trykk på play game'
+    splashmessage[2] = 'Registrer deg eller logg inn'
+    splashmessage[3] = 'Begynn å spille'
+    splashmessage[4] = 'Ha det gøy, og'
+    splashmessage[5] = 'Lykke til'
+    
+    var closingtags = '</font>'
+    var i = 0
+    var ns4 = document.layers ? 1 : 0
+    var ie4 = document.all ? 1 : 0
+    var ns6 = document.getElementById && !document.all ? 1 : 0
+    var theimages = new Array()
+    if (document.images) {
+        for (p = 0; p < preloadimages.length; p++) {
+            theimages[p] = new Image()
+            theimages[p].src = preloadimages[p]
+        }
+    }
+    function displaysplash() {
+        if (i < splashmessage.length) {
+            sc_cross.style.visibility = "hidden"
+            sc_cross.innerHTML = '<b><center>' + openingtags + splashmessage[i] + closingtags + '</center></b>'
+            sc_cross.style.left = ns6 ? parseInt(window.pageXOffset) + parseInt(window.innerWidth) / 2 - parseInt(sc_cross.style.width)/ 2 :     document.body.scrollLeft + document.body.clientWidth / 2 - parseInt(sc_cross.style.width) / 2
+            sc_cross.style.top = ns6 ? parseInt(window.pageYOffset) + parseInt(window.innerHeight) / 2 - sc_cross.offsetHeight / 2 :
+            document.body.scrollTop + document.body.clientHeight / 2 - sc_cross.offsetHeight / 2
+            sc_cross.style.visibility = "visible"
+            i++
+        }
+        else {
+            window.location = targetdestination
+            return
+        }
+        setTimeout("displaysplash()", intervals)
+    }
+    function displaysplash_ns() {
+        if (i < splashmessage.length) {
+            sc_ns.visibility = "hide"
+            sc_ns.document.write('<b>' + openingtags + splashmessage[i] + closingtags + '</b>')
+            sc_ns.document.close()
+            sc_ns.left = pageXOffset + window.innerWidth / 2 - sc_ns.document.width / 2
+            sc_ns.top = pageYOffset + window.innerHeight / 2 - sc_ns.document.height / 2
+            sc_ns.visibility = "show"
+            i++
+        }
+        else {
+            window.location = targetdestination
+            return
+        }
+        setTimeout("displaysplash_ns()", intervals)
+    }
+    function positionsplashcontainer() {
+        if (ie4 || ns6) {
+            sc_cross = ns6 ? document.getElementById("splashcontainer") : document.all.splashcontainer
+            displaysplash()
+        }
+        else if (ns4) {
+            sc_ns = document.splashcontainerns
+            sc_ns.visibility = "show"
+            displaysplash_ns()
+        }
+        else
+            window.location = targetdestination
+    }
+    window.onload = positionsplashcontainer
+    
+</script>

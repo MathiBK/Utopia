@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "UITest";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div id="app" v-cloak>
+    
+    
+    <span v-bind:title="message">
+        Hover to see my dynamically bound title!
+    </span>
+    
+    
+    <ol>
+        <li v-for="todo in todos">
+            {{ todo.text }}
+        </li>
+    </ol>
+
+
+    <p>{{ message }}</p>
+    <button v-on:click="reverseMessage">Reverse Message</button>
+
+    <p>{{ message }}</p>
+    <input v-model="message">
+
+    <h3>Authors</h3>
+      <ul>
+        <li v-for="author in authors">
+          {{ author.firstName }} {{ author.lastName  }}
+        </li>
+      </ul>
+    
+      <h3>Books</h3>
+      <ul>
+        <li v-for="book in books">
+          {{ book.title }}
+        </li>
+      </ul>
+
+<button v-bind:[key]="value"></button>
+
+</div>
+@section Scripts
+{
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+var app = new Vue({
+el: '#app',
+data: {
+message: 'You loaded this page on ' + new Date().toLocaleString(),
+todos: [
+      { text: 'Learn JavaScript' },
+      { text: 'Learn Vue' },
+      { text: 'Build something awesome' },
+     
+    ],
+authors: [],
+    books: [],
+},
+created: function () {
+    var self = this;
+
+    // Fetch list of authors
+    axios.get('/api/authors')
+    .then(function (response) {
+        self.authors = response.data;
+    })
+
+    // Fetch list of books
+    axios.get('/api/books')
+    .then(function (response) {
+        self.books = response.data;
+    })
+  },
+
+methods: {
+    reverseMessage: function () {
+      this.message = this.message.split('').reverse().join('')
+    }
+  },
+
+});
+</script>
+}

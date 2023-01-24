@@ -1,0 +1,18 @@
+﻿@model utopia.Models.ViewModels.TileResourcesViewModel
+
+
+<div class="container">
+    
+    <div class="row">
+        
+    @foreach (var v in Model.TileResources)
+    {
+        <div class="col-sm-3">
+        <h2>@v.Resource.ResourceName : @v.Amount</h2>
+        
+        </div>
+    }
+    </div>
+
+
+</div>
